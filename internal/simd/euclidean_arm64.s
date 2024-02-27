@@ -17,7 +17,7 @@ TEXT ·EuclideanF32(SB), NOSPLIT, $0
   MOVD a_size + (8)(FP), R20
   MOVD $4, R8
   MUL R20, R8
-	ADD R0, R8, R8
+  ADD R0, R8, R8
 
 	// Drop one pointer since we compare after the loop
   MOVD $16, R7
@@ -36,7 +36,7 @@ loop:
   CMP R0, R8
   BGE loop
 
-	WORD $0x4c9f7840;    // 	st1.4s	{ v0 }, [x2], #16
+  WORD $0x4c9f7840;    // 	st1.4s	{ v0 }, [x2], #16
 
-	RET
+  RET
 
