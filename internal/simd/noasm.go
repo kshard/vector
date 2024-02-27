@@ -18,3 +18,10 @@ var (
 func EuclideanF32(a, b, c []float32) {
 	panic("SIMD not available")
 }
+
+// Type Class for Euclidean distance
+type Euclidean [4]float32
+
+func (d Euclidean) Distance(a, b []float32) float32 {
+	panic("SIMD not available")
+}
