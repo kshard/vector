@@ -9,89 +9,34 @@
 package vector
 
 import (
-	"github.com/kshard/vector/internal/noasm"
-	"github.com/kshard/vector/internal/pure"
-	"github.com/kshard/vector/internal/simd"
+	"github.com/fogfish/golem/pure"
 )
 
 // Vector of float32
 type F32 = []float32
 
-const (
-	EUCLIDEAN_WITH_PURE = iota
-	EUCLIDEAN_WITH_NOASM
-	EUCLIDEAN_WITH_SIMD
-)
-
-// Squared Euclidean distance between two vectors
-func Euclidean() interface{ Distance(F32, F32) float32 } {
-	switch euclideanConfig() {
-	case EUCLIDEAN_WITH_PURE:
-		return pure.Euclidean(0)
-	case EUCLIDEAN_WITH_NOASM:
-		return noasm.Euclidean(0)
-	case EUCLIDEAN_WITH_SIMD:
-		return simd.Euclidean{}
-	}
-
-	return nil
+// Generic trait to  estimate "distance" between two vectors
+type Surface[Vector any] interface {
+	Distance(Vector, Vector) float32
 }
 
-func euclideanConfig() int {
-	if simd.ENABLED_EUCLIDEAN {
-		return EUCLIDEAN_WITH_SIMD
-	}
+// From is a combinator that lifts V ⟼ V ⟼ float32 function to
+// an instance of Distance type trait
+type From[Vector any] func(Vector, Vector) float32
 
-	if noasm.ENABLED_EUCLIDEAN {
-		return EUCLIDEAN_WITH_NOASM
-	}
+func (f From[Vector]) Distance(a, b Vector) float32 { return f(a, b) }
 
-	return EUCLIDEAN_WITH_PURE
+// ContraMap is a combinator that build a new instance of type trait Surface[V] using
+// existing instance of Distance[A] and f: b ⟼ a
+type ContraMap[A, B any] struct {
+	Surface[A]
+	pure.ContraMap[A, B]
 }
 
-const (
-	COSINE_WITH_PURE = iota
-	COSINE_WITH_NOASM
-	COSINE_WITH_SIMD
-)
-
-// Cosine Distance
-func Cosine() interface{ Distance(F32, F32) float32 } {
-	switch cosineConfig() {
-	case COSINE_WITH_PURE:
-		return pure.Cosine(0)
-	case COSINE_WITH_NOASM:
-		return noasm.Cosine(0)
-		// case COSINE_WITH_SIMD:
-		// 	return simd.Euclidean{}
-	}
-
-	return nil
-}
-
-func cosineConfig() int {
-	if simd.ENABLED_COSINE {
-		return COSINE_WITH_SIMD
-	}
-
-	if noasm.ENABLED_COSINE {
-		return COSINE_WITH_NOASM
-	}
-
-	return COSINE_WITH_PURE
-}
-
-const (
-	CONFIG_EUCLIDEAN = "euclidean"
-	CONFIG_COSINE    = "cosine"
-)
-
-// Info about config
-func Info() map[string]int {
-	info := map[string]int{}
-
-	info[CONFIG_EUCLIDEAN] = euclideanConfig()
-	info[CONFIG_COSINE] = cosineConfig()
-
-	return info
+// Distance implementation of contra variant functor
+func (f ContraMap[A, B]) Distance(a, b B) float32 {
+	return f.Surface.Distance(
+		f.ContraMap(a),
+		f.ContraMap(b),
+	)
 }
