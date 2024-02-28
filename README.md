@@ -73,11 +73,28 @@ Instruction pipeline is 3.3x faster and SIMD is 3.8x faster (due to [bounds chec
 ```
 go test -run=^$ -bench=. -cpu=1
 
-BenchmarkPureEuclideanF32    4072329        270.5 ns/op
-BenchmarkNoAsmEuclideanF32  14938154         81.59 ns/op
-BenchmarkSIMDEuclideanF32   16888236         71.15 ns/op
-BenchmarkPureCosineF32       3987426        299.8 ns/op
-BenchmarkNoAsmCosineF32     11738499        102.2 ns/op
+BenchmarkPureEuclideanF32          4072329        270.50 ns/op
+BenchmarkNoAsmEuclideanF32        14938154         81.59 ns/op
+BenchmarkSIMDEuclideanF32         16888236         71.15 ns/op
+BenchmarkContraMapEuclidean       16595740         71.25 ns/op
+BenchmarkPureCosineF32             3987426        299.80 ns/op
+BenchmarkNoAsmCosineF32           11738499        102.20 ns/op
+```
+
+## High-level abstraction
+
+**ContraMap** turn morphisms around `f: B ⟼ A`.
+
+```go
+type Node struct {
+  ID     int
+  Vector vector.F32
+}
+
+vector.ContraMap[vector.F32, Node]{
+	Surface:   vector.Euclidean(),
+	ContraMap: func(n Node) []float32 { return n.Vector },
+}
 ```
 
 
@@ -103,7 +120,8 @@ go test
 
 Checklist:
 1. No new bounds check introduced: `go build -gcflags="-d=ssa/check_bce"`
-2. No performance degradations: `go test -run=^$ -bench=. -cpu=1`
+2. Check inlining: `go build -gcflags "-m"`
+3. No performance degradations: `go test -run=^$ -bench=. -cpu=1`
 
 
 ### commit message

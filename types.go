@@ -8,7 +8,9 @@
 
 package vector
 
-import "github.com/fogfish/golem/pure"
+import (
+	"github.com/fogfish/golem/pure"
+)
 
 // Vector of float32
 type F32 = []float32

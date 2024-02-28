@@ -27,6 +27,8 @@ type Node struct {
 	Vector vector.F32
 }
 
+func ntov(n Node) []float32 { return n.Vector }
+
 var (
 	n  = 300
 	d  float32
@@ -76,25 +78,6 @@ func TestNoAsmEuclideanF32(t *testing.T) {
 	}
 }
 
-func TestNoAsmEuclideanContraMap(t *testing.T) {
-	euc := pure.Euclidean(0)
-	sut := vector.ContraMap[vector.F32, Node]{
-		Surface:   noasm.Euclidean(0),
-		ContraMap: func(n Node) []float32 { return n.Vector },
-	}
-
-	for i := 0; i < n*100; i++ {
-		a := randF32()
-		b := randF32()
-
-		g := euc.Distance(a, b)
-		d := sut.Distance(Node{Vector: a}, Node{Vector: b})
-		if !equal(d, g) {
-			t.Errorf("failed distance")
-		}
-	}
-}
-
 func TestSIMDEuclideanF32(t *testing.T) {
 	if !simd.ENABLED_EUCLIDEAN {
 		return
@@ -109,6 +92,25 @@ func TestSIMDEuclideanF32(t *testing.T) {
 
 		g := euc.Distance(a, b)
 		d := sut.Distance(a, b)
+		if !equal(d, g) {
+			t.Errorf("failed distance")
+		}
+	}
+}
+
+func TestContraMapEuclidean(t *testing.T) {
+	euc := pure.Euclidean(0)
+	sut := vector.ContraMap[vector.F32, Node]{
+		Surface:   vector.Euclidean(),
+		ContraMap: func(n Node) []float32 { return n.Vector },
+	}
+
+	for i := 0; i < n*100; i++ {
+		a := randF32()
+		b := randF32()
+
+		g := euc.Distance(a, b)
+		d := sut.Distance(Node{Vector: a}, Node{Vector: b})
 		if !equal(d, g) {
 			t.Errorf("failed distance")
 		}
@@ -159,10 +161,10 @@ func BenchmarkSIMDEuclideanF32(t *testing.B) {
 	}
 }
 
-func BenchmarkNoAsmEuclideanContraMap(t *testing.B) {
+func BenchmarkContraMapEuclidean(t *testing.B) {
 	euc := vector.ContraMap[vector.F32, Node]{
-		Surface:   noasm.Euclidean(0),
-		ContraMap: func(n Node) []float32 { return n.Vector },
+		Surface:   vector.Euclidean(),
+		ContraMap: ntov,
 	}
 
 	for i := t.N; i > 0; i-- {
