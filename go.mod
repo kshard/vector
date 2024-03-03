@@ -1,6 +1,6 @@
 module github.com/kshard/vector
 
-go 1.22.0
+go 1.21.3
 
 require (
 	github.com/chewxy/math32 v1.10.1
