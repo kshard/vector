@@ -190,14 +190,6 @@ func BenchmarkNoAsmEuclideanF32(t *testing.B) {
 	}
 }
 
-func BenchmarkNoAsmEuclideanUn(t *testing.B) {
-	euc := noasm.EuclideanU(0)
-
-	for i := t.N; i > 0; i-- {
-		d = euc.Distance(a, b)
-	}
-}
-
 func BenchmarkSIMDEuclideanF32(t *testing.B) {
 	euc := simd.Euclidean{}
 
