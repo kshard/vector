@@ -9,6 +9,7 @@
 package vector_test
 
 import (
+	"math"
 	"math/rand"
 	"testing"
 
@@ -43,6 +44,14 @@ func init() {
 	b = randF32()
 	n1 = Node{ID: 1, Vector: a}
 	n2 = Node{ID: 2, Vector: b}
+}
+
+func zeroF32() vector.F32 {
+	v := make(vector.F32, n)
+	for i := 0; i < n; i++ {
+		v[i] = 0.0
+	}
+	return v
 }
 
 func randF32() vector.F32 {
@@ -128,6 +137,34 @@ func TestNoAsmCosineF32(t *testing.T) {
 		g := euc.Distance(a, b)
 		d := sut.Distance(a, b)
 		if !equal(d, g) {
+			t.Errorf("failed distance")
+		}
+	}
+}
+
+func TestPureCosineZeroF32(t *testing.T) {
+	sut := pure.Cosine(0)
+
+	for i := 0; i < n*100; i++ {
+		a := zeroF32()
+		b := randF32()
+
+		d := sut.Distance(a, b)
+		if math.IsNaN(float64(d)) {
+			t.Errorf("failed distance")
+		}
+	}
+}
+
+func TestNoAsmCosineZeroF32(t *testing.T) {
+	sut := noasm.Cosine(0)
+
+	for i := 0; i < n*100; i++ {
+		a := zeroF32()
+		b := randF32()
+
+		d := sut.Distance(a, b)
+		if math.IsNaN(float64(d)) {
 			t.Errorf("failed distance")
 		}
 	}

@@ -22,6 +22,7 @@ func CosineF32(a, b []float32) (d float32) {
 		panic("vector length must be multiple of 4")
 	}
 
+	e := float32(1e-8)
 	ab := float32(0.0)
 	aa := float32(0.0)
 	bb := float32(0.0)
@@ -53,6 +54,9 @@ func CosineF32(a, b []float32) (d float32) {
 	}
 
 	s := math32.Sqrt(aa) * math32.Sqrt(bb)
+	if s < e {
+		s = e
+	}
 
 	d = (1 - ab/s) / 2
 
