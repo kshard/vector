@@ -20,7 +20,6 @@ func CosineF32(a, b []float32) (d float32) {
 		panic("vectors must have equal lengths")
 	}
 
-	e := float32(1e-8)
 	ab := float32(0.0)
 	aa := float32(0.0)
 	bb := float32(0.0)
@@ -32,10 +31,6 @@ func CosineF32(a, b []float32) (d float32) {
 	}
 
 	s := math32.Sqrt(aa) * math32.Sqrt(bb)
-	if s < e {
-		s = e
-	}
-
 	d = (1 - ab/s) / 2
 
 	return
@@ -46,4 +41,8 @@ type Cosine int
 
 func (Cosine) Distance(a, b []float32) float32 {
 	return CosineF32(a, b)
+}
+
+func (Cosine) Equal(a, b []float32) bool {
+	return EqualF32(a, b)
 }

@@ -22,7 +22,6 @@ func CosineF32(a, b []float32) (d float32) {
 		panic("vector length must be multiple of 4")
 	}
 
-	e := float32(1e-8)
 	ab := float32(0.0)
 	aa := float32(0.0)
 	bb := float32(0.0)
@@ -54,10 +53,10 @@ func CosineF32(a, b []float32) (d float32) {
 	}
 
 	s := math32.Sqrt(aa) * math32.Sqrt(bb)
-	if s < e {
-		s = e
-	}
 
+	// Note: two proportional vectors have a cosine similarity of 1 |d|=0
+	//       two orthogonal vectors have a similarity of 0          |d|=0.5
+	//       and two opposite vectors have a similarity of -1.      |d|=1.0
 	d = (1 - ab/s) / 2
 
 	return
@@ -68,4 +67,8 @@ type Cosine int
 
 func (Cosine) Distance(a, b []float32) float32 {
 	return CosineF32(a, b)
+}
+
+func (Cosine) Equal(a, b []float32) bool {
+	return EqualF32(a, b)
 }

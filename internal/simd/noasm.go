@@ -10,6 +10,8 @@
 
 package simd
 
+import "github.com/kshard/vector/internal/noasm"
+
 var (
 	ENABLED_EUCLIDEAN = false
 	ENABLED_COSINE    = false
@@ -20,8 +22,12 @@ func EuclideanF32(a, b, c []float32) {
 }
 
 // Type Class for Euclidean distance
-type Euclidean [4]float32
+type Euclidean int
 
-func (d Euclidean) Distance(a, b []float32) float32 {
+func (Euclidean) Distance(a, b []float32) float32 {
 	panic("SIMD not available")
+}
+
+func (Euclidean) Equal(a, b []float32) bool {
+	return noasm.EqualF32(a, b)
 }
