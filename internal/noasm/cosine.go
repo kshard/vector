@@ -22,7 +22,6 @@ func CosineF32(a, b []float32) (d float32) {
 		panic("vector length must be multiple of 4")
 	}
 
-	// e := float32(1e-8)
 	ab := float32(0.0)
 	aa := float32(0.0)
 	bb := float32(0.0)
