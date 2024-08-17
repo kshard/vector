@@ -10,21 +10,22 @@ package vector
 
 import (
 	"github.com/fogfish/golem/pure"
+	"github.com/fogfish/golem/pure/eq"
 )
 
 // Vector of float32
 type F32 = []float32
 
-// Generic trait to  estimate "distance" between two vectors
-type Surface[Vector any] interface {
+// Generic trait to estimate "distance" between two vectors
+type Distance[Vector any] interface {
 	Distance(Vector, Vector) float32
 }
 
-// From is a combinator that lifts V ⟼ V ⟼ float32 function to
-// an instance of Distance type trait
-type From[Vector any] func(Vector, Vector) float32
-
-func (f From[Vector]) Distance(a, b Vector) float32 { return f(a, b) }
+// Generic trait defines vector category
+type Surface[Vector any] interface {
+	eq.Eq[Vector]
+	Distance[Vector]
+}
 
 // ContraMap is a combinator that build a new instance of type trait Surface[V] using
 // existing instance of Distance[A] and f: b ⟼ a
@@ -33,9 +34,17 @@ type ContraMap[A, B any] struct {
 	pure.ContraMap[A, B]
 }
 
-// Distance implementation of contra variant functor
+// Distance contra variant functor
 func (f ContraMap[A, B]) Distance(a, b B) float32 {
 	return f.Surface.Distance(
+		f.ContraMap(a),
+		f.ContraMap(b),
+	)
+}
+
+// Equality contra variant functor
+func (f ContraMap[A, B]) Equal(a, b B) bool {
+	return f.Surface.Equal(
 		f.ContraMap(a),
 		f.ContraMap(b),
 	)

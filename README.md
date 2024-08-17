@@ -73,12 +73,14 @@ Instruction pipeline is 3.3x faster and SIMD is 3.8x faster (due to [bounds chec
 ```
 go test -run=^$ -bench=. -cpu=1
 
-BenchmarkPureEuclideanF32          4072329        270.50 ns/op
-BenchmarkNoAsmEuclideanF32        14938154         81.59 ns/op
-BenchmarkSIMDEuclideanF32         16888236         71.15 ns/op
-BenchmarkContraMapEuclidean       16595740         71.25 ns/op
-BenchmarkPureCosineF32             3987426        299.80 ns/op
-BenchmarkNoAsmCosineF32           11738499        102.20 ns/op
+BenchmarkPureEqualF32         12029072          99.30 ns/op
+BenchmarkNoAsmEqualF32        13555147          87.51 ns/op
+BenchmarkPureEuclideanF32      4425328         269.50 ns/op
+BenchmarkNoAsmEuclideanF32    14897370          79.70 ns/op
+BenchmarkSIMDEuclideanF32     16708311          70.73 ns/op
+BenchmarkContraMapEuclidean   16567862          71.07 ns/op
+BenchmarkPureCosineF32         3995820         299.70 ns/op
+BenchmarkNoAsmCosineF32       11836580         100.80 ns/op
 ```
 
 ## High-level abstraction

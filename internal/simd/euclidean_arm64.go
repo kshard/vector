@@ -11,6 +11,7 @@
 package simd
 
 import (
+	"github.com/kshard/vector/internal/noasm"
 	"golang.org/x/sys/cpu"
 )
 
@@ -22,9 +23,14 @@ var ENABLED_EUCLIDEAN = cpu.ARM64.HasASIMD
 func EuclideanF32(a, b, c []float32)
 
 // Type Class for Euclidean distance
-type Euclidean [4]float32
+type Euclidean int
 
-func (d Euclidean) Distance(a, b []float32) float32 {
+func (Euclidean) Distance(a, b []float32) float32 {
+	var d [4]float32
 	EuclideanF32(a, b, d[:])
 	return d[3] + d[2] + d[1] + d[0]
+}
+
+func (Euclidean) Equal(a, b []float32) bool {
+	return noasm.EqualF32(a, b)
 }

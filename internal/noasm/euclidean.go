@@ -45,3 +45,7 @@ type Euclidean int
 func (Euclidean) Distance(a, b []float32) float32 {
 	return EuclideanF32(a, b)
 }
+
+func (Euclidean) Equal(a, b []float32) bool {
+	return EqualF32(a, b)
+}

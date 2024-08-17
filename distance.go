@@ -25,14 +25,17 @@ const (
 )
 
 // Squared Euclidean distance between two vectors
-func Euclidean() interface{ Distance(F32, F32) float32 } {
+func Euclidean() interface {
+	Equal(F32, F32) bool
+	Distance(F32, F32) float32
+} {
 	switch euclideanConfig() {
 	case EUCLIDEAN_WITH_PURE:
 		return pure.Euclidean(0)
 	case EUCLIDEAN_WITH_NOASM:
 		return noasm.Euclidean(0)
 	case EUCLIDEAN_WITH_SIMD:
-		return simd.Euclidean{}
+		return simd.Euclidean(0)
 	}
 
 	return nil
@@ -61,14 +64,15 @@ const (
 )
 
 // Cosine Distance
-func Cosine() interface{ Distance(F32, F32) float32 } {
+func Cosine() interface {
+	Equal(F32, F32) bool
+	Distance(F32, F32) float32
+} {
 	switch cosineConfig() {
 	case COSINE_WITH_PURE:
 		return pure.Cosine(0)
 	case COSINE_WITH_NOASM:
 		return noasm.Cosine(0)
-		// case COSINE_WITH_SIMD:
-		// 	return simd.Euclidean{}
 	}
 
 	return nil
