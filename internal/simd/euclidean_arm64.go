@@ -15,7 +15,11 @@ import (
 	"golang.org/x/sys/cpu"
 )
 
-var ENABLED_EUCLIDEAN = cpu.ARM64.HasASIMD
+// Note: https://github.com/kshard/vector/issues/6
+//
+// Assembly function causes NaN exception on some input
+// SIMD disable until fixed (not a high priority, see noasm)
+var ENABLED_EUCLIDEAN = cpu.ARM64.HasASIMD && false
 
 // Squared Euclidean distance between two vectors.
 //
